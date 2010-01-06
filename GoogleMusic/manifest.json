@@ -1,0 +1,20 @@
+{
+   "background_page": "background.html",
+   "name": "GoogleMusic",
+   "options_page": "options.html",
+   "version": "2.1.1",
+   "description": "Google Music 谷歌音乐",
+   "permissions": [ "tabs", "http://*.google.com/", "https://*.google.com/" ],
+   "browser_action": {
+      "default_icon": "favorite.png",
+      "default_title": "Google Music 谷歌音乐",
+      "popup": "popup.html"
+   },
+   "icons": {
+      "128": "128.png",
+      "16": "16.png",
+      "64": "64.png",
+      "32": "32.png",
+      "48": "48.png"
+   }
+}

@@ -1,0 +1,22 @@
+/* www.renren.com */
+
+/* 首页 好友 博客 留言 应用 邀请 */
+    .blank-holder,			    /* 头部和底部广告 */
+	.blank-bar,					/* 左边栏广告 */
+	.adimgr						/* 右边栏广告 */
+	{
+        display: none;
+    }
+
+/* 相册 分享*/
+    .blank-holder,			    /* 头部和底部广告 */
+    .ad-bar						/* 右边栏广告 */
+	{
+        display: none;
+    }
+	
+/* 相册 分享*/
+    #nostar						/* 提示实名 */
+	{
+        display: none;
+    }

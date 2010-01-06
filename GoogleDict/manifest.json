@@ -1,0 +1,17 @@
+{
+   "background_page": "background.htm",
+   "content_scripts": [ {
+      "css": [ "frame.css" ],
+      "js": [ "lookup.js" ],
+      "matches": [ "http://*/*", "https://*/*" ],
+      "run_at": "document_end"
+   } ],
+   "description": "Ctrl-Double-Click any word to look it up in Google Dictionary.",
+   "icons": {
+      "128": "icon.png"
+   },
+   "name": "GoogleDict",
+   "options_page": "options.htm",
+   "permissions": [ "tabs", "http://www.google.com/", "http://ajax.googleapis.com/" ],
+   "version": "1.0.0"
+}

@@ -1,0 +1,10 @@
+#iqdb_sidebar { position:fixed; top:0; right:0px; z-index:100000; width:520px; background-color:#fff; background-position: left top;  background-repeat:repeat-y; margin:0px; -webkit-box-shadow:-10px -5px 5px #666;-webkit-border-radius:10px; opacity:0.9;}
+
+
+
+
+#iqdb_frame{ height:100%; width:500px;  float:right; background-color:#fff; }
+
+
+
+#iqdb_button { width:41px; height:16px; background-color:#333; z-index:1000001; float:right; top:0; right:0; position:fixed; color:#FFF; text-align:center;text-shadow: #444444 -1px -1px 0px; font-family:"Arial Black", Gadget, sans-serif;-webkit-border-radius:1px; border-left:1px solid #666; border-bottom:1px solid #666; cursor:pointer; padding:1px;}

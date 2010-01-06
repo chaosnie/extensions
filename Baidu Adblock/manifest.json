@@ -1,0 +1,16 @@
+{
+   "content_scripts": [ {
+      "css": [ "custom.css" ],
+      "matches": [ "http://www.baidu.com/*", "http://tieba.baidu.com/*", "http://news.baidu.com/*", "http://zhidao.baidu.com/*", "http://mp3.baidu.com/*"  ]
+   } ],
+   "description": "移除百度相关网站（新闻 贴吧 知道 MP3）广告。Baidu Adblock",
+   "icons": {
+      "128": "128.png",
+      "16": "16.png",
+      "32": "32.png",
+	  "64": "64.png",
+      "48": "48.png"
+   },
+   "name": "Baidu Adblock",
+   "version": "1.0.4"
+}

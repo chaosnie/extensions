@@ -1,0 +1,20 @@
+{
+   "name": "Douban.fm",
+   "version": "1.0.2",
+   "description": "Douban.fm Extension for Chrome 豆瓣电台",
+   "background_page": "background.html",
+   "browser_action": {
+      "default_icon": "douban1.png",
+      "default_title": "开始收听豆瓣电台"
+   },
+   "permissions": [
+    "tabs",
+	"http://*/"
+   ],
+   "icons": { 
+		"16": "icon16.png",
+		"32": "icon32.png",
+		"48": "icon64.png",
+		"64": "icon64.png",
+		"128": "icon128.png" }
+}

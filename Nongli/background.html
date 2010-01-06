@@ -1,0 +1,346 @@
+﻿<head> 
+<script>
+var sendRealTime = false;
+var jsonobj;
+var jsonRealTime;
+var failRefreshTime = 5*1000;
+var timeoutCode;
+var timeSpan = localStorage.getItem('timeSpan') || 20;
+var dsCodeMode = (localStorage['dsCodeMode']=="1");
+
+var canvas;
+var canvasContext;
+var browserImg;
+
+function init() {
+  canvas = document.getElementById('canvas');
+  canvasContext = canvas.getContext('2d');
+  loadDsCodeMode(dsCodeMode);
+}
+
+function loadDsCodeMode(isDsCodeMode){
+	dsCodeMode = isDsCodeMode;
+	if (isDsCodeMode){
+		timeSpan = 20;
+	}
+	document.getElementById('lblToday').innerText = getText("day1");
+	document.getElementById('lblTomorrow').innerText = getText("day2");
+	document.getElementById('lblTheDayAfterTomorrow').innerText = getText("day3");
+	document.getElementById('aRefresh').innerText = getText("refresh");
+	document.getElementById('aSetting').innerText = getText("setting");
+	document.getElementById('7days').innerText = getText("details");
+}
+
+function getText(key){
+	if (!dsCodeMode){
+		switch (key){
+			case "day1":
+			return "今天";
+			case "day2":
+			return "明天";
+			case "day3":
+			return "后天";
+			
+			case "refresh":
+			return "刷新";
+			case "setting":
+			return "定制";
+			case "details":
+			return "七天天气";
+			
+			case "update time:":
+			return "更新时间:";
+		}
+	}
+	return key;
+}
+// 加载天气
+function loadWeather(){
+	if (timeoutCode){
+		clearTimeout(timeoutCode);
+	}
+	chrome.browserAction.setBadgeBackgroundColor({color:[190, 190, 190, 230]});
+	chrome.browserAction.setBadgeText({text:'..'});
+	var rs= "http://61.4.185.48:81/g/";
+	var cookieinfo1= getCookie('newcity1');
+	var id1;
+	
+	var url1= '';
+	var start1=url1.indexOf("=");
+	var end1=url1.indexOf("T");
+	// 直接获取某指定城市
+	if(start1!=-1) {
+		// 目前不会到这里来
+		console.log("if(start1!=-1) { id:");
+	}
+	// 根据cookie获取城市
+	else {
+		if(!cookieinfo1) {
+			var js = document.createElement("script"); 
+			js.setAttribute("type", "text/javascript");
+			js.setAttribute("src",rs);
+			document.body.insertBefore(js, null);
+		} else {
+			id1=cookieinfo1;
+			console.log("id1=cookieinfo1; id:"+id1);
+			returndata(id1);
+		}
+	}
+}
+// 获取城市的js的回调方法
+function id_callback(){ 
+	console.log(typeof id);
+	std = id;
+	if(typeof(id)=="undefined"){
+		chrome.browserAction.setBadgeBackgroundColor({color:[190, 190, 190, 230]});
+		chrome.browserAction.setBadgeText({text:'??'});
+		console.error('获取城市失败');
+	} else {
+		//id1=std;
+		time=new Date();
+		time.setTime(time.getTime()+365*24*60*60*1000*10);
+		date=time.toGMTString();
+		document.cookie = 'newcity1=' + escape(std)+ ';expires='+date;
+		returndata(std);
+	}
+}
+// 获取天气数据，参数id为城市id
+function returndata(id){
+	document.getElementById("7days").href="http://www.weather.com.cn/html/weather/"+id+".shtml";
+	document.getElementById("t1").href="http://www.weather.com.cn/html/weather/"+id+".shtml";
+
+	var datastr1='http://m.weather.com.cn/data/'+id+'.html';
+	var realTimeDatastr1 = 'http://www.weather.com.cn/data/sk/'+id+'.html';
+	sendRealTime = false;
+	var isSuccess;
+	if (PostOrder(datastr1)){
+		HandleStateChange();
+		sendRealTime = true;
+		if (PostOrder(realTimeDatastr1)){
+			HandleStateChange();
+			
+			isSuccess = true;
+			
+			var cityname=jsonobj.weatherinfo.city;
+			var temp1=jsonobj.weatherinfo.temp1;
+			var temp2=jsonobj.weatherinfo.temp2;
+			var img1=jsonobj.weatherinfo.img1;
+			var img2=jsonobj.weatherinfo.img2;
+			var img3=jsonobj.weatherinfo.img3;
+			var img4=jsonobj.weatherinfo.img4;
+			var zs=jsonobj.weatherinfo.index_d;
+			var uv=jsonobj.weatherinfo.index_uv;
+			var zs48=jsonobj.weatherinfo.index48_d;
+			var uv48=jsonobj.weatherinfo.index48_uv;
+			var zssm="中国天气网今日天气指数 紫外线指数:"+uv+"。"+"穿衣指数:"+zs;
+			var zssm48="中国天气网明日天气指数 紫外线指数:"+uv48+"。"+"穿衣指数:"+zs48;
+			var weather1=jsonobj.weatherinfo.weather1;
+			var weather2=jsonobj.weatherinfo.weather2;
+			var date_y=jsonobj.weatherinfo.date_y;
+			var date_w=jsonobj.weatherinfo.week;
+			var date=date_y+date_w;	
+
+			if(img2=="99") {
+				img2=img1;
+			} else if(img4="99") {
+				img4=img3;
+			}
+			
+			if (dsCodeMode){
+				document.getElementById("city1").innerHTML ='';
+			} else {
+				document.getElementById("city1").innerHTML =cityname;
+			}
+			document.getElementById("small1").src="http://m.weather.com.cn/weather_img/"+img1+".gif"
+			//document.getElementById("small2").src="http://m.weather.com.cn/new/n"+img2+".gif"
+			document.getElementById("small3").src="http://m.weather.com.cn/weather_img/"+img3+".gif"
+			
+			//document.getElementById("small4").src="http://m.weather.com.cn/new/n"+img4+".gif"
+			
+			// 第三天
+			document.getElementById("small5").src="http://m.weather.com.cn/weather_img/"+jsonobj.weatherinfo.img5+".gif"
+			
+			if (dsCodeMode){
+				document.getElementById("small1").title='';
+				document.getElementById("small3").title='';
+			
+				document.getElementById("temp1").innerHTML =processC(temp1);
+				document.getElementById("temp2").innerHTML =processC(temp2);
+				document.getElementById("temp3").innerHTML =processC(jsonobj.weatherinfo.temp3);
+				
+				document.getElementById("weather3").innerHTML ='';
+				document.getElementById("weather1").innerHTML ='';
+				document.getElementById("weather2").innerHTML ='';
+			} else {
+				document.getElementById("small1").title=zssm;
+				document.getElementById("small3").title=zssm48;
+			
+				document.getElementById("temp1").innerHTML =temp1;
+				document.getElementById("temp2").innerHTML =temp2;
+				document.getElementById("temp3").innerHTML =jsonobj.weatherinfo.temp3;
+				
+				document.getElementById("weather3").innerHTML =jsonobj.weatherinfo.weather3;
+				document.getElementById("weather1").innerHTML =weather1;
+				document.getElementById("weather2").innerHTML =weather2;
+			}
+			
+			// 显示日期
+			if (dsCodeMode){
+				document.getElementById("todayNum").innerHTML = '';
+			} else {
+				document.getElementById("todayNum").innerHTML = date_y;
+			}
+			
+			// 改变浏览器按钮的显示
+//			document.getElementById("browserImg").onload = drawIcon;
+			// 根据设置判断是显示今天还是明天的天气图标
+			var dateSelect = localStorage.getItem('dateSelect');
+			if (dateSelect&&dateSelect =='tomorrow'){
+				document.getElementById("browserImg").src="http://m.weather.com.cn/weather_img/"+img3+".gif"
+			} else {
+				document.getElementById("browserImg").src="http://m.weather.com.cn/weather_img/"+img1+".gif"
+			}
+			var timeString = new Date().getHours()+":"+new Date().getMinutes()
+			document.getElementById('updateTime').innerText = getText('update time:')+timeString;
+			// 显示文字
+			var strTip;
+			if (dsCodeMode){
+				strTip = 'now air temperature:'+jsonRealTime.weatherinfo.temp +
+					'C\r\nday1:'+processC(temp1)+'\r\nday2:'+processC(temp2)+'\r\nday3:'+processC(jsonobj.weatherinfo.temp3)
+					+'\r\nupdate time:'+timeString;
+			} else {
+				strTip = '现在气温：'+jsonRealTime.weatherinfo.temp +
+					'℃\r\n今天：'+weather1+temp1+'\r\n明天：'+weather2+temp2+'\r\n后天：'+jsonobj.weatherinfo.weather3+jsonobj.weatherinfo.temp3
+					+'\r\n更新时间：'+timeString;
+			}
+			chrome.browserAction.setTitle({title:strTip});
+			chrome.browserAction.setBadgeBackgroundColor({color:[0, 97, 255,100]});
+			chrome.browserAction.setBadgeText({text:Math.round(jsonRealTime.weatherinfo.temp).toString()});
+			
+			// 定时刷新
+			timeoutCode = setTimeout('loadWeather()',timeSpan*1000*60);
+			failRefreshTime = 5*1000;
+		}
+	}
+	// 失败
+	if (!isSuccess) {
+		chrome.browserAction.setBadgeBackgroundColor({color:[190, 190, 190, 230]});
+		chrome.browserAction.setBadgeText({text:'?'});
+		timeoutCode = setTimeout('loadWeather()',failRefreshTime);
+		failRefreshTime = failRefreshTime*2;
+	}
+}
+function processC(inputC){
+	var index = inputC.indexOf('~');
+	return parseInt(inputC.substr(0,index-1))+"C~"+parseInt(inputC.substr(index+1))+"C";
+}
+
+var xmlhttp=null; 
+// 同步处理
+function HandleStateChange() 
+{
+	if (xmlhttp.readyState == 4){
+		var jsontext =xmlhttp.responseText;
+		var func = new Function("return " + jsontext);
+		if (!sendRealTime){
+			jsonobj = func();
+		} else {
+			jsonRealTime = func();
+		}
+	}
+}
+// 同步ajax获取天气
+function PostOrder(xmldoc) 
+{ 
+	xmlhttp = new XMLHttpRequest();
+	xmlhttp.open("GET", xmldoc,false); 
+	xmlhttp.onreadystatechange= HandleStateChange;
+	try {
+		xmlhttp.send(null); 
+	}catch(e){
+		return false;
+		console.error(e);
+	}
+	return true;
+}
+function setCookie(name, value) 
+{ 
+    var argv = setCookie.arguments; 
+    var argc = setCookie.arguments.length; 
+    var expires = (argc > 2) ? argv[2] : null; 
+    if(expires!=null) 
+	{ 
+        var LargeExpDate = new Date (); 
+         LargeExpDate.setTime(LargeExpDate.getTime() + (expires*1000*3600*24));         
+     	} 
+     document.cookie = name + "=" + escape (value)+((expires == null) ? "" : ("; expires=" +LargeExpDate.toGMTString())); 
+}
+function getCookie(Name) 
+{ 
+    var search = Name + "=" 
+    if(document.cookie.length > 0) 
+    	{ 
+         offset = document.cookie.indexOf(search) 
+        if(offset != -1) 
+        	{ 
+             offset += search.length 
+             end = document.cookie.indexOf(";", offset) 
+            if(end == -1) end = document.cookie.length 
+            return unescape(document.cookie.substring(offset, end)) 
+         } 
+        else return "" 
+     } 
+} 
+function deleteCookie(name) 
+{ 
+	 var expdate = new Date(); 
+	  expdate.setTime(expdate.getTime() - (86400 * 1000 * 1)); 
+     setCookie(name, "", expdate); 
+} 
+function getInnerHTML(){
+	return document.getElementById('mainDiv').innerHTML;
+}
+
+function drawIcon() {
+	browserImg = document.getElementById('browserImg');
+	canvasContext.save();
+	canvasContext.drawImage(browserImg,0,0,canvas.width,canvas.height);
+	canvasContext.restore();
+	//canvasContext.stroke();
+
+	chrome.browserAction.setIcon({imageData:canvasContext.getImageData(0, 0, canvas.width,canvas.height)});
+}
+</script>
+</head> 
+<body onload="init();loadWeather();">
+<img id="browserImg" style="width:19px;height:19px;">
+<canvas id="canvas" width="19" height="19">
+<div id="mainDiv">
+<table class="s360"> 
+  <tr>
+  <td></td>
+  <td colspan="2" align="right"><em style="color:#CCCCCC" id="todayNum"></em></td>
+  <td colspan="3"></td>
+  <td colspan="2"><span style="color:#CCCCCC" id="updateTime"></span></td>
+  </tr>
+  <tr> 
+    <th scope="row"><a id="t1" href="#" target="_blank"><em id="city1"></em></a></th> 
+    <td rowspan="2" width="46px"><img id="small1" src="#" alt="" width="50" height="50"></img></td> 
+    <td width="105px"><strong id="lblToday">今天</strong>&nbsp;<em id="temp1"></em></td> 
+    <td rowspan="2" width="46px"><img id="small3" src="#" alt="" width="50" height="50"></img></td> 
+    <td width="105px"><strong id="lblTomorrow">明天</strong>&nbsp;<em id="temp2"></em></td> 
+    <td rowspan="2" width="46px"><img id="small5" src="#" alt="" width="50" height="50"></img></td> 
+    <td width="105px"><strong id="lblTheDayAfterTomorrow">后天</strong>&nbsp;<em id="temp3"></em></td> 
+    <td align="center" style="text-align:center"><a href='#' onclick='chrome.extension.getBackgroundPage().loadWeather();
+loadHtml();return false;' id="aRefresh">刷新</a></td> 
+  </tr> 
+  <tr> 
+    <td class="custom"><a href="options.html" id="aSetting" target="_blank">定制</a></td> 
+    <td><em id="weather1"></em></td> 
+    <td><em id="weather2"></em></td> 
+    <td><em id="weather3"></em></td> 
+    <td class="days"><a id="7days" href="#" target="_blank" class="black">七天天气</a></td> 
+  </tr> 
+</table>
+</div>
+</body>

@@ -1,0 +1,234 @@
+<script>
+// parseUri 1.2.2
+// (c) Steven Levithan <stevenlevithan.com>
+// MIT License
+
+function parseUri (str) {
+	var	o   = parseUri.options,
+		m   = o.parser[o.strictMode ? "strict" : "loose"].exec(str),
+		uri = {},
+		i   = 14;
+
+	while (i--) uri[o.key[i]] = m[i] || "";
+
+	uri[o.q.name] = {};
+	uri[o.key[12]].replace(o.q.parser, function ($0, $1, $2) {
+		if ($1) uri[o.q.name][$1] = $2;
+	});
+
+	return uri;
+};
+
+parseUri.options = {
+	strictMode: false,
+	key: ["source","protocol","authority","userInfo","user","password","host","port","relative","path","directory","file","query","anchor"],
+	q:   {
+		name:   "queryKey",
+		parser: /(?:^|&)([^&=]*)=?([^&]*)/g
+	},
+	parser: {
+		strict: /^(?:([^:\/?#]+):)?(?:\/\/((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?))?((((?:[^?#\/]*\/)*)([^?#]*))(?:\?([^#]*))?(?:#(.*))?)/,
+		loose:  /^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/
+	}
+};
+// end parseURI
+
+add2cal = {
+    
+    BASE_URL: 'http://add2cal.blackdrumm.com',
+    
+    scraper: null,
+    
+    scrapers: {
+        facebook: /(facebook\.com\/event\.php[^#]+$)|(facebook\.com(.+)#\/event\.php)/,
+        evite: /evite\.com\/pages\/invite\/viewInvite\.jsp/,
+        yelp: /yelp\.com\/biz\//
+    },
+    
+    domains: ['scratch.dev.lan','www.chapeausf.com'],
+    
+    tab_states: {},
+    
+    current_tab: null,
+    
+    anim_timeout: null,
+    
+    handle_tab_update: function (tab, callback)
+    {
+        add2cal.scraper = null
+        
+        for (n in add2cal.scrapers)
+        {
+            var s = add2cal.scrapers[n]
+            
+            if (tab.url.match(s))
+            {
+                add2cal.scraper = n
+                break
+            }
+        }
+        
+        if (add2cal.scraper)
+        {
+            add2cal.tab_states[tab.id] = true
+            callback(tab, true)
+            return
+        }
+        
+        var parts
+        var url = parseUri(tab.url)
+        
+        try
+        {
+            parts = url.host.split('.')
+        }
+        catch (e)
+        {
+            add2cal.tab_states[tab.id] = false
+            callback(tab, false)
+            return
+        }
+        
+        if (parts.length == 2)
+        {
+            parts.unshift('www')
+        }
+        
+        var domain = parts.join('.')
+        
+        if (-1 < add2cal.domains.indexOf(domain))
+        {
+            var req = new XMLHttpRequest()
+            req.open('GET', 'https://mail.google.com/mail/?view=cm&fs=1&tf=1&shva=1', true)
+            req.onreadystatechange = function (e)
+            {
+                if (req.readyState == 4)
+                {
+                    var result = JSON.parse(req.responseText)
+                    
+                    if (result.events || result.venues)
+                    {
+                        add2cal.tab_states[tab.id] = true
+                        callback(tab, true)
+                    }
+                    else
+                    {
+                        add2cal.tab_states[tab.id] = false
+                        callback(tab, false)
+                    }
+                }
+            }
+            req.send(null)
+        }
+        else
+        {
+            add2cal.tab_states[tab.id] = false
+            callback(tab, false)
+        }
+    },
+    
+    set_button_state: function (state)
+    {
+        if (add2cal.anim_timeout)
+        {
+            clearTimeout(add2cal.anim_timeout)
+        }
+        
+        if (state)
+        {
+            chrome.browserAction.setIcon({path: 'icon_active.png'})
+            add2cal.anim_timeout = setTimeout(function ()
+            {
+                chrome.browserAction.setBadgeText({text:'+'})
+            }, 2000)
+            
+            add2cal.log_action({
+                action: 'alert-show'
+            })
+        }
+        else
+        {
+            chrome.browserAction.setIcon({path: 'icon.png'})
+            chrome.browserAction.setBadgeText({text:''})
+        }
+    },
+    
+    log_action: function (details)
+    {
+        details['area'] = 'chrome-extension'
+        
+        var pairs = []
+        
+        for (n in details)
+        {
+            var encoded_n = encodeURIComponent(n)
+            
+            if (details[n].constructor == Array)
+            {
+                details[n].forEach(function (v)
+                {
+                    pairs.push(encoded_n+'='+encodeURIComponent(v))
+                })
+            }
+            else
+            {
+                pairs.push(encoded_n+'='+encodeURIComponent(details[n]))
+            }
+        }
+        
+        var data = pairs.join('&')
+        
+        var req = new XMLHttpRequest()
+        req.open('POST', add2cal.BASE_URL+'/actions/log', true)
+        req.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+        req.setRequestHeader('Content-Length', data.length)
+        req.send(data)
+    }
+}
+
+chrome.tabs.onUpdated.addListener(function(tab_id, change_info, tab)
+{
+    if (change_info.url)
+    {
+        add2cal.handle_tab_update(tab, function (tab, state)
+        {
+            chrome.tabs.getSelected(null, function (curtab)
+            {
+                if (curtab.id == tab.id)
+                {
+                    add2cal.set_button_state(state)
+                }
+            })
+        })
+    }
+})
+
+chrome.browserAction.onClicked.addListener(function (tab)
+{
+    chrome.tabs.executeScript(tab.id, {
+        code: 'var head=document.getElementsByTagName("head")[0];var script=document.createElement("script");script.type="text/javascript";script.src="http://add2cal.blackdrumm.com/bookmarklet/load?t='+(new Date().getTime())+'";head.appendChild(script)'
+    })
+    
+    add2cal.log_action({
+        action: 'bookmarklet-load'
+    })
+})
+
+chrome.tabs.onSelectionChanged.addListener(function(tab_id, info)
+{
+    add2cal.set_button_state(add2cal.tab_states[tab_id])
+})
+
+chrome.windows.onFocusChanged.addListener(function(window_id)
+{
+    chrome.tabs.getSelected(null, function (tab)
+    {
+        add2cal.set_button_state(add2cal.tab_states[tab.id])
+    })
+})
+
+add2cal.log_action({
+    action: 'extension-load'
+})
+
+</script>

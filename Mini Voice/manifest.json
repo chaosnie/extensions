@@ -1,0 +1,17 @@
+{
+   "name": "Mini Voice",
+   "background_page": "background.html",
+   "version": "1.0.3",
+   "description": "Mini Google Voice,Google Voice Notifier.",
+   "permissions": [ "tabs", "http://*.google.com/", "https://*.google.com/" ],
+   "browser_action": {
+      "default_icon": "bubble-19.png",
+      "default_title": "Click to use Mini Voice"
+   },
+   "icons": {
+      "128": "128.png",
+      "64": "48.png",
+      "32": "48.png",
+      "48": "48.png"
+   }
+}

@@ -1,0 +1,25 @@
+{
+   "background_page": "background.html",
+   "browser_action": {
+      "default_icon": "images/icon128.png",
+      "default_title": "Click Here To Search"
+   },
+   "content_scripts": [ {
+      "css": [ "css/main.css" ],
+      "js": [ "js/script.js" ],
+      "matches": [ "http://*/*", "https://*/*" ],
+      "run_at": "document_end"
+   } ],
+   "description": "A quick access to iqdb.org, find similar anime pictures without leaving the page.",
+   "icons": {
+      "128": "images/icon128.png",
+      "16": "images/icon16.png",
+      "32": "images/icon32.png",
+      "64": "images/icon64.png"
+   },
+   "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDGEvSt/c82MbbM42pMhQutkh8D3n0zeWl/lwB5Kt0z17WykZy9UXNxLSkJG36aIvk/uyXCAKUuXQqddDcDxFs2zKet+J0vE4rKhlj4YEqwdBHTNPJLfDnTjCT1LDPDETckBltueRs2fE2Eb79am6OLLxdFG6Ymk+UCCakQg2v53QIDAQAB",
+   "name": "Multi-service Anime Image Search",
+   "permissions": [ "http://*/*", "tabs" ],
+   "update_url": "http://clients2.google.com/service/update2/crx",
+   "version": "0.1"
+}

@@ -1,0 +1,129 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd"> 
+<html> 
+<head> 
+<style>
+p{font-size:12px;}
+</style>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+<script type="text/javascript" src="http://m.weather.com.cn/js/ajax_1.4.5.js"></script> 
+<script type="text/javascript" src="menus1.js"></script> 
+<script type="text/javascript">
+function delCookie(name)
+{
+    var exp = new Date();
+    exp.setTime(exp.getTime() - 1);
+    var cval=getCookie(name);
+    if(cval!=null) document.cookie= name + "="+cval+";expires="+exp.toGMTString();
+}
+function getCookie(name)
+{
+    var arr = document.cookie.match(new RegExp("(^| )"+name+"=([^;]*)(;|$)"));
+     if(arr != null) return unescape(arr[2]); return null;
+}
+function getcity()
+  {
+	if (document.getElementById('ckbDsCodeMode').checked){
+		localStorage.setItem("dsCodeMode","1");
+		
+		delCookie('newcity1');
+		chrome.extension.getBackgroundPage().loadDsCodeMode(true);
+		chrome.extension.getBackgroundPage().loadWeather();
+		alert('save success!');
+		return;
+	}
+	else {
+		localStorage.setItem("dsCodeMode","");
+	}
+	
+  var time;
+  var date;
+  var obj = document.getElementById("city3");
+  var strsel = obj.options[obj.selectedIndex].text;
+  if (strsel=="县"){
+	alert ("请选择您要定制的城市");
+  }
+  else {
+	var timeSpan = document.getElementById('txtTimeSpan').value;
+	timeSpan = parseInt(timeSpan);
+	if (isNaN(timeSpan)){
+		alert('刷新间隔必须是数字');
+		return;
+	}
+	
+	localStorage.setItem('timeSpan',timeSpan);
+	
+	var ogg = document.getElementById("city4");
+	var std = ogg.options[ogg.selectedIndex].text;
+	time=new Date();
+	time.setTime(time.getTime()+365*24*60*60*1000*10);
+	date=time.toGMTString();
+	document.cookie = 'newcity1=' + escape(std)+ ';expires='+date;
+	
+	localStorage.setItem('dateSelect',document.getElementById('selDate').value);
+	
+	// 改变当前
+	chrome.extension.getBackgroundPage().loadDsCodeMode(false);
+	chrome.extension.getBackgroundPage().timeSpan = timeSpan;
+	chrome.extension.getBackgroundPage().loadWeather();
+	
+	alert('保存成功');
+ }
+}
+function init(){
+	var dateSelect = localStorage.getItem('dateSelect');
+	var timeSpan = localStorage.getItem('timeSpan') || 20;
+	if (dateSelect){
+		document.getElementById('selDate').value = dateSelect;
+		document.getElementById('txtTimeSpan').value = timeSpan;
+	}
+	
+	if (localStorage.getItem("dsCodeMode") == "1"){
+		document.getElementById('ckbDsCodeMode').checked = true;
+		DoDsCodeMode(true);
+	}
+}
+function DoDsCodeMode(dsCodeMode){
+	if (dsCodeMode){
+		document.getElementById('advanceSet').style.display = 'none';
+		document.getElementById('btnSave').value = 'save';
+		
+		document.getElementById('lblTitle').innerHTML = 'china weather extension';
+		document.getElementById('lblSetting').innerHTML = '(setting)';
+		document.getElementById('lblAuthor').innerHTML = 'author:zhucai';
+		document.getElementById('lblEmail').innerHTML = 'email:zhucai+weather1@gmail.com';
+		document.getElementById('lblDataSrc').innerHTML = 'data source:http://www.weather.com.cn';
+	}
+	else {
+		document.getElementById('advanceSet').style.display = '';
+		document.getElementById('btnSave').value = '保存';
+		
+		document.getElementById('lblTitle').innerHTML = '天气预报插件';
+		document.getElementById('lblSetting').innerHTML = '(设置)';
+		document.getElementById('lblAuthor').innerHTML = '作者：朱才';
+		document.getElementById('lblEmail').innerHTML = '邮箱：zhucai+weather1@gmail.com';
+		document.getElementById('lblDataSrc').innerHTML = '数据来源：<a href="http://www.weather.com.cn/" target="_blank">中国天气网</a>';
+	}
+}
+</script> 
+</head> 
+<body onload="init()">
+<div style="width:500px;margin:0px auto;">
+<h1 style="text-align:center"><span id="lblTitle">天气预报插件</span><span id="lblSetting" style="font-size:14px;">(设置)</span></h1>
+DS Code? Click it:<input type="checkbox" id="ckbDsCodeMode" onchange="DoDsCodeMode(this.checked)">now is english simple mode
+<div id="advanceSet">
+<p>请选择您要订制的城市：<em id="city"></em></p>
+<p> </p>
+<p>请输入刷新间隔时间：<input type="text" id="txtTimeSpan" style="width:40px" value="20">(单位：分钟)</p>
+<p>请选择浏览器按钮(位于地址栏右侧)显示的日期：<select id="selDate">
+<option value="today">今天</option>
+<option value="tomorrow">明天</option>
+</select></p>
+</div>
+<p style="text-align:center;"><input type="submit" id="btnSave" value="保存" onclick ="getcity();"  class="button"> </p>
+<p id="lblAuthor">作者：朱才</p>
+<p id="lblEmail">邮箱：zhucai+weather1@gmail.com</p>
+<p id="lblDataSrc">数据来源：<a href="http://www.weather.com.cn/" target="_blank">中国天气网</a></p>
+</div>
+</body> 
+</html>

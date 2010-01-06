@@ -1,0 +1,21 @@
+<html>
+<head>
+  <script>
+ 
+    var ports = new Array(50);
+
+    chrome.extension.onConnect.addListener(function (port) {
+      if (ports[port.tab.id] != port) {
+        ports[port.tab.id] = port;
+      }
+    });
+
+    chrome.browserAction.onClicked.addListener(function (tab) {
+      var port = ports[tab.id];
+      if (port) {
+        port.postMessage({});
+      }
+    });
+  </script>
+</head>
+</html>

@@ -1,0 +1,17 @@
+{
+   "name": "Renren",
+   "version": "1.0.2",
+   "description": "人人网，实时关注好友动态，分享。",
+   "permissions": [ "http://*/*", "https://*/*", "tabs" ],
+   "browser_action": {
+      "default_icon": "19.png",
+      "default_title": "点击看看好友们都在做什么。",
+      "popup": "popup.html"
+   },
+   "icons": {
+      "16": "19.png",
+      "64": "64.png",
+      "32": "32.png",
+      "48": "48.png"
+   }
+}

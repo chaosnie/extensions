@@ -1,0 +1,10 @@
+{
+   "background_page": "bg.html",
+   "browser_action": {
+      "default_icon": "icon.png"
+   },
+   "description": "Add events to your Google Calendar from anywhere.",
+   "name": "Quickmail",
+   "permissions": [ "http://*/*", "https://*/*", "tabs" ],
+   "version": "1.0.0.4"
+}

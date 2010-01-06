@@ -1,0 +1,57 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<title>Music</title>
+</head>
+<body>
+<script language="JavaScript" type="text/javascript"> 
+function getInnerHTML(){
+	return document.getElementById('con').innerHTML;
+}
+
+function changeIframeSrc(id, url) {
+    var el = document.getElementById(id);
+    if (el && el.src) {
+        el.src = url;
+        return false;
+    }
+    return true;
+}
+
+function makeFrame() { 
+   ifrm = document.createElement("IFRAME"); 
+   ifrm.setAttribute("src", "http://douban.fm/radio"); 
+   ifrm.style.width = 298+"px"; 
+   ifrm.style.height = 245+"px"; 
+   document.body.appendChild(ifrm); 
+} 
+
+function nextone(){
+location.reload(true);
+makeFrame();
+}
+
+chrome.browserAction.onClicked.addListener(function (tab) {
+	if (document.getElementById('con').src == "http://douban.fm/radio"){
+    document.getElementById('con').src="";
+	chrome.browserAction.setIcon({
+        path: 'douban1.png'
+    });
+    chrome.browserAction.setTitle({
+        title: '单击开启豆瓣电台'
+    });
+	}else{
+	document.getElementById('con').src="http://douban.fm/radio";
+	chrome.browserAction.setIcon({
+        path: 'douban2.png'
+    });
+    chrome.browserAction.setTitle({
+        title: '单击停止豆瓣电台，双击下一曲'
+    });
+	}
+});
+
+</script> 
+<div><iframe id="con" marginwidth="0" marginheight="0" src="null" scrolling="no" width="298" frameborder="0" height="245"></iframe> </div> 
+</body>
+</html>

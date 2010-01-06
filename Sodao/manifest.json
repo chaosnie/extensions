@@ -1,0 +1,18 @@
+{
+   "name": "Sodao",
+   "background_page": "background.html",
+   "version": "1.0",
+   "description": "搜道美女时钟，sodao.com。",
+   "permissions": [ "http://*/*", "https://*/*", "tabs" ],
+   "browser_action": {
+      "default_icon": "19.png",
+      "default_title": "点击美女报时。",
+      "popup": "popup.html"
+   },
+   "icons": {
+      "128": "128.jpg",
+      "64": "64.jpg",
+      "32": "32.jpg",
+      "48": "48.jpg"
+   }
+}

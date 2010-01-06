@@ -1,0 +1,20 @@
+{
+   "name": "Nongli",
+   "version": "1.2.1",
+   "background_page": "background.html",
+   "description": "日历; 农历; 阳历; 月历; 节日; 时区; 节气; 八字; 生肖; gregorian solar; chinese lunar; calendar;",
+   "permissions": [ "http://*/*", "https://*/*", "tabs", "http://*.weather.com.cn/"  ],
+   "options_page": "options.html",
+   "browser_action": {
+      "default_icon": "16.png",
+      "default_title": "查看日历，农历，天气",
+      "popup": "popup.html"
+   },
+   "icons": {
+      "128": "128.png",
+      "16": "16.png",
+      "64": "64.png",
+      "32": "32.png",
+      "48": "48.png"
+   }
+}

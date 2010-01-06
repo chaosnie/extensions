@@ -1,0 +1,986 @@
+(function () {
+    var jQuery = undefined;
+    var $ = undefined;
+    var oldjQuery;
+    var currentHost = document.body.ibriiData.currentHost;
+    var currentVersion = document.body.ibriiData.currentVersion;
+    var embedMouseOverEvents = {};
+    var frameDivs = undefined;
+    main();
+
+    function main() {
+        if (! (document.body.ibriiData.open)) {
+            waitForLib("window.jQuery.ui", function () {
+                loaded()
+            })
+        }
+    }
+
+    function waitForLib(lib, callback, condition) {
+        var eLib = eval(lib);
+        if (isDef(eLib) && (isDef(condition) ? condition() : 1)) {
+            callback()
+        } else {
+            setTimeout(function () {
+                waitForLib(lib, callback, condition)
+            },
+            100)
+        }
+    }
+
+    function isDef(object) {
+        if (typeof(object) == "undefined") {
+            return false
+        } else {
+            return true
+        }
+    }
+
+    function isIE() {
+        if (navigator.appName == "Microsoft Internet Explorer") {
+            return true
+        } else {
+            return false
+        }
+    }
+
+    function isFirefox() {
+        if (navigator.userAgent.indexOf("Firefox") != -1) {
+            return true
+        } else {
+            return false
+        }
+    }
+
+    function loaded() {
+        document.getElementsByClassName = document.body.ibriiData.prototypeJsfunction;
+        jQuery = $ = window.jQuery.noConflict(true);
+        if (isDef(window.ibriiOldjQuery)) {
+            window.jQuery = window.$ = window.ibriiOldjQuery
+        }
+        jQuery.fn.outerHTML = function () {
+            return jQuery("<div>").append(this.eq(0).clone()).html()
+        };
+        var currentLocation = window.location.href;
+        var hostWithoutWWW = currentHost;
+        if (hostWithoutWWW.length >= 4) {
+            if (hostWithoutWWW.substring(0, 4) == "www.") {
+                hostWithoutWWW = hostWithoutWWW.substring(4, hostWithoutWWW.length)
+            }
+        }
+        if (currentLocation.indexOf(hostWithoutWWW) > 0) {
+            if ((currentLocation.match("#installClipper$")) == "#installClipper") {
+                window.location = "http://" + currentHost + "/clipper/try";
+                return
+            }
+        }
+//        var ibriiUrl = "http://" + currentHost + "/secured/Bookmarklet.aspx";
+        var ibriiUrl = "http://www.baidu.com";
+        var docBody = jQuery(document.body);
+        var oldBackAttValue;
+        if (isIE()) {
+            oldBackAttValue = document.body.style.backgroundAttachment;
+            document.body.style.backgroundAttachment = "fixed"
+        }
+        var doc = document;
+        if (docBody[0].tagName == "FRAMESET") {
+            var iframes = jQuery("frame", docBody);
+            var biggerFrame = {
+                area: 0,
+                element: null
+            };
+            iframes.each(function () {
+                var me = jQuery("body", this.contentWindow.document);
+                var area = me.width() * me.height();
+                if (area > biggerFrame.area) {
+                    biggerFrame.area = area;
+                    biggerFrame.element = me
+                }
+            });
+            docBody = jQuery(biggerFrame.element);
+            if ($.browser.msie) {
+                doc = biggerFrame.element[0].document
+            } else {
+                doc = biggerFrame.element[0].ownerDocument
+            }
+        }
+        var iBookEl = doc.createElement("DIV");
+        var bookmarkletHeader = doc.createElement("DIV");
+        var bookmarkletHeader_a = doc.createElement("A");
+        var resizableWorkaroundOverlay = doc.createElement("DIV");
+        var iframeDiv = doc.createElement("DIV");
+        var iframeDiv_iframe = doc.createElement("IFRAME");
+        var resizeHandleW = doc.createElement("DIV");
+        var resizeHandleE = doc.createElement("DIV");
+        bookmarkletHeader.setAttribute("id", "ibriiBookmarkletHeader");
+        jQuery(bookmarkletHeader).attr("style", "height:28px;                                              position:absolute;                                             right:0px;                                              width:100%;cursor:move;z-index:1;");
+        bookmarkletHeader_a.setAttribute("id", "ibriiCloseButton");
+        bookmarkletHeader_a.setAttribute("href", "#");
+        jQuery(bookmarkletHeader_a).attr("style", "color:white;font-size:21px;                                               font-weight:bold;position:absolute;                                               right:0px;text-decoration:none;font-family:arial;padding-right:15px;padding-left:5px;");
+        bookmarkletHeader_a.innerHTML = "x";
+        resizableWorkaroundOverlay.setAttribute("id", "ibriiResizableWorkaroundOverlay");
+        jQuery(resizableWorkaroundOverlay).attr("style", "position:absolute;                                                         width:100%;height:100%;z-index:1;display:none;background-color:white;filter: alpha(opacity = 0);opacity:0;");
+        iframeDiv.setAttribute("id", "ibriiIframeDiv");
+        jQuery(iframeDiv).attr("style", "height:100%;width:100%;");
+        iframeDiv_iframe.setAttribute("frameBorder", "0");
+        iframeDiv_iframe.setAttribute("src", ibriiUrl);
+        jQuery(iframeDiv_iframe).attr("style", "font-size:medium;                             height:100%;                             right:0;                             top:0;                             left:0;                             width:100%;                             background-color:#666666;                             position:absolute;                             border:1px solid #666666;                             overflow:hidden;                             ");
+        resizeHandleW.className = "ui-resizable-handle ui-resizable-w";
+        jQuery(resizeHandleW).attr("style", "position:absolute;left:-8px;top:0px;width:15px;height:100%;z-index:1;cursor:e-resize;filter:alpha(opacity=0);background-color:#FFFFFF;opacity:0;");
+        resizeHandleE.className = "ui-resizable-handle ui-resizable-e";
+        jQuery(resizeHandleE).attr("style", "position:absolute;right:-13px;top:0px;width:15px;height:100%;z-index:1;cursor:e-resize;filter:alpha(opacity=0);background-color:#FFFFFF;opacity:0;");
+        iBookEl.setAttribute("id", "ibriiBookmarklet");
+        jQuery(iBookEl).attr("style", "position:fixed;                                        top:0px;                                        right:0px;                                        width:330px;                                        height:100%;                                        z-index:2147483647;                                        font-size:16px;                                        _position:absolute;                                        _top:expression(eval(document.documentElement.scrollTop || document.body.scrollTop));                                        ");
+        docBody.append(iBookEl);
+        iBookEl.appendChild(bookmarkletHeader);
+        bookmarkletHeader.appendChild(bookmarkletHeader_a);
+        iBookEl.appendChild(resizableWorkaroundOverlay);
+        iBookEl.appendChild(resizeHandleW);
+        iBookEl.appendChild(resizeHandleE);
+        iBookEl.appendChild(iframeDiv);
+        iframeDiv.appendChild(iframeDiv_iframe);
+        var ibriiBookmarklet = jQuery(iBookEl);
+        document.body.ibriiData.open = true;
+        jQuery("#ibriiCloseButton").click(function () {
+            var deleteSelector;
+            if (jQuery.browser.msie) {
+                deleteSelector = "#ibriiBookmarklet, .ibriiDraggerContainer"
+            } else {
+                deleteSelector = "#ibriiBookmarklet, .ibriiDragger"
+            }
+            var toDelete = jQuery(deleteSelector, document.body);
+            toDelete.each(function () {
+                jQuery(this).remove()
+            });
+            if (isDef(oldBackAttValue)) {
+                document.body.style.backgroundAttachment = oldBackAttValue
+            }
+            document.body.ibriiData.open = false;
+            jQuery("img,a").each(function () {
+                var me = $(this);
+                var oldCursor = me.data("ibriiOldCursor");
+                me.css("cursor", (oldCursor) ? oldCursor : "");
+                var stopPropagationFunction = me.data("ibriiStopPropagationFunction");
+                me.unbind("dragstart", stopPropagationFunction);
+                if (isIE()) {
+                    var aParent = me.data("ibriiOldImageParent");
+                    if (aParent) {
+                        me.replaceWith(aParent)
+                    }
+                }
+            });
+            jQuery("object:not(object:has(embed)), embed").each(function () {
+                this.onmouseover = embedMouseOverEvents.oldMouseover;
+                this.onmouseout = embedMouseOverEvents.oldMouseout
+            });
+            jQuery(".ibriiFrame").remove();
+            return false
+        });
+        var workaroundOverlay = jQuery(document.getElementById("ibriiResizableWorkaroundOverlay"));
+        var isIeBrowser = isIE();
+        ibriiBookmarklet.draggable({
+            handle: "#ibriiBookmarkletHeader",
+            axis: "x",
+            container: "html",
+            stop: function (e, ui) {
+                workaroundOverlay.hide();
+                if (isIeBrowser) {
+                    ibriiBookmarklet.css({
+                        height: "100%"
+                    })
+                } else {
+                    ibriiBookmarklet.css({
+                        height: "100%",
+                        position: "fixed",
+                        top: "0"
+                    })
+                }
+            },
+            start: function (e, ui) {
+                workaroundOverlay.show()
+            },
+            snap: "window"
+        }).resizable({
+            handles: {
+                w: ".ui-resizable-w",
+                e: ".ui-resizable-e"
+            },
+            stop: function (e, ui) {
+                workaroundOverlay.hide();
+                if (isIeBrowser) {
+                    ibriiBookmarklet.css({
+                        height: "100%"
+                    })
+                } else {
+                    ibriiBookmarklet.css({
+                        height: "100%",
+                        position: "fixed",
+                        top: "0"
+                    })
+                }
+            },
+            start: function (e, ui) {
+                workaroundOverlay.show()
+            },
+            minWidth: "330"
+        });
+        if (true) {
+            if (jQuery.browser.msie) {
+                var draggerDivContainer = jQuery("<span class='ibriiDraggerContainer' style='                 position:absolute !important;                border:1px solid #F589B5 !important;                z-index:2147483646;                font-size:16px !important;                background-image:url(http://" + currentHost + "/imgs/bookmarkletGradient.png);                 padding:0px !important;                margin:0px !important;                color:#FFFFFF !important;                line-height:16px !important;                 ' >                    <a href='http://www.ibrii.wrong' class='ibriiDragger' unselectable='false'                     style='                     font-weight:bold !important;                    z-index:2147483646 !important;                    cursor:move !important;                    display:inline-block !important;                    width:90px;                    height:18px;                    font-size:12px !important;                    font-family:Sans-serif !important;                     padding-left:0px !important;                    padding-right:0px !important;                    padding-top:0px !important;                    padding-top:3px; !important;                     margin:0px !important;                    text-decoration:none !important;                    text-align:center !important;                     line-height:16px !important;                     color:#FFFFFF !important;                    background-color:#EF317C !important;                 '>                 <span style='background-image:url(http://" + currentHost + "/imgs/bookmarkletMoveCross.png);                 display:inline-block;                height:16px;                width:16px;                float:left;                position:relative;                left:4px;                '></span>                 Drag me</a></span>")
+            } else {
+                var draggerDivContainer = jQuery("<a href='http://www.ibrii.wrong' class='ibriiDragger ibriiDraggerContainer' unselectable='false' style='position:absolute;background-color:#EF317C !important;background-image:url(http://" + currentHost + "/imgs/bookmarkletGradient.png);padding-top:3px;height:19px;color:#FFFFFF !important;font-weight:bold !important;z-index:2147483646 !important;border:1px solid #F589B5 !important;cursor:move !important;padding-left:1em !important;padding-right:1em !important;font-size:12px !important;text-decoration:none !important;font-family:Sans-serif !important;-moz-border-radius-topleft:8px;-moz-border-radius-topright:8px;-webkit-border-top-left-radius:5px;-webkit-border-top-right-radius:5px;'><span style='background-image:url(http://" + currentHost + "/imgs/bookmarkletMoveCross.png);display:inline-block;height:16px;width:16px;float: left; position: relative; right: 5px;'></span> Drag me</a>")
+            }
+            var objectsInIframe = new Array();
+            var objectsInIframeOffSet = new Array();
+            frameDivs = createFrame(2, 5, "ibriiFrame");
+            grabDone();
+            var getObjectInIframe = function (element) {
+                try {
+                    var body = element.contentWindow.document.body;
+                    var flashObjectIframe = jQuery("object:not(>embed), embed", body);
+                    flashObjectIframe.each(function () {
+                        objectsInIframe.push(this)
+                    });
+                    var iframeObjects = jQuery("iframe", element);
+                    if (iframeObjects.length == 0) {
+                        return
+                    } else {
+                        iframeObjects.each(function () {
+                            var body = this.contentWindow.document.body;
+                            var flashObjectIframe = jQuery("object:not(>embed), embed", body);
+                            flashObjectIframe.each(function () {
+                                objectsInIframe.push(this)
+                            });
+                            getObjectInIframe(this)
+                        })
+                    }
+                } catch(err) {}
+            };
+            var iframeObjects = jQuery("iframe");
+            iframeObjects.each(function () {
+                var test = $(this).offset();
+                if ($(this).attr("src") != null) {
+                    if ($(this).attr("src").indexOf("Bookmarklet.aspx") == -1) {
+                        objectsInIframeOffSet.push($(this).offset());
+                        getObjectInIframe(this)
+                    }
+                }
+            });
+            if (objectsInIframe.length > 0) {
+                for (var k = 0; k < objectsInIframe.length; k++) {
+                    var dragger = draggerDivContainer.clone();
+                    dragger.css("left", objectsInIframeOffSet[k].left + "px");
+                    dragger.css("top", (objectsInIframeOffSet[k].top - 20) + "px");
+                    PrepareDragger(objectsInIframe[k], dragger, true)
+                }
+            }
+            var flashObject = jQuery("object:not(>embed), embed");
+            flashObject.each(function () {
+                var dragger = draggerDivContainer.clone();
+                SetDraggerContainerHoverEvent(dragger);
+                PrepareDragger(this, dragger, false);
+                CreateFrameInternals(this)
+            })
+        }
+        var isSupported = false;
+
+        function PrepareDragger(element, dragger, isIframe) {
+            if (element.parentNode.tagName.toLowerCase() != "object") {
+                var f = jQuery(element);
+                dragger[0].ibriiEmbedObject = f;
+                dragger.bind("click", function (e) {
+                    e.preventDefault();
+                    e.stopPropagation()
+                });
+                if (jQuery.browser.msie) {
+                    var draggerA = jQuery("a", dragger);
+                    draggerA.mousedown(function () {
+                        var cont = jQuery(this).parent()[0];
+                        var rng = document.body.createTextRange();
+                        rng.moveToElementText(cont);
+                        rng.expand("word");
+                        rng.select()
+                    })
+                }
+                var fPosition = f.offset();
+                if (fPosition.top >= 4) {
+                    fPosition.top = fPosition.top - 4
+                }
+                if (jQuery.browser.mozilla) {
+                    var embed = $("embed", f);
+                    if (embed.length > 0) {
+                        fPosition = embed.offset()
+                    }
+                }
+                if (navigator.userAgent.indexOf("MSIE 8") > -1) {
+                    var embed = $("embed", f);
+                    if (embed.length > 0) {
+                        fPosition = embed.offset()
+                    }
+                }
+                if (!isIframe) {
+                    dragger.css("left", fPosition.left + "px");
+                    if (fPosition.top >= 20) {
+                        dragger.css("top", (fPosition.top - 20) + "px")
+                    }
+                }
+                var tmpDragger;
+                if (jQuery.browser.msie) {
+                    SetDragger(element, draggerA)
+                } else {
+                    SetDragger(f, dragger)
+                }
+                if (isSupported) {
+                    if ($.browser.safari) {
+                        var code = dragger.attr("embed");
+                        dragger.removeAttr("embed");
+                        dragger.attr("href", code);
+                        dragger.click(function () {
+                            return false
+                        })
+                    }
+                    jQuery("body").append(dragger)
+                }
+            }
+        }
+
+        function generateGuid() {
+            var result, i, j;
+            result = "";
+            for (j = 0; j < 32; j++) {
+                if (j == 8 || j == 12 || j == 16 || j == 20) {
+                    result = result + "-"
+                }
+                i = Math.floor(Math.random() * 16).toString(16).toUpperCase();
+                result = result + i
+            }
+            return result
+        }
+
+        function SetDragger(element, dragger) {
+            if (document.domain == "www.youtube.com") {
+                if (jQuery("#movie_player").length > 0) {
+                    var embed_code = jQuery("#movie_player")[0].getVideoEmbedCode();
+                    embed_code = SetWmode(embed_code, false);
+                    var id = generateGuid();
+                    embed_code = SetID(embed_code, false, id);
+                    dragger.attr("embed", escape(embed_code));
+                    isSupported = true
+                }
+            } else {
+                if (document.domain == "www.metacafe.com") {
+                    if (jQuery("#EmbedCode").length > 0) {
+                        var embed_code = jQuery("#EmbedCode")[0].value;
+                        embed_code = SetWmode(embed_code, false);
+                        var id = generateGuid();
+                        embed_code = SetID(embed_code, false, id);
+                        dragger.attr("embed", escape(embed_code));
+                        isSupported = true
+                    }
+                } else {
+                    var sourceElement;
+                    if (jQuery.browser.msie) {
+                        sourceElement = element
+                    } else {
+                        sourceElement = element[0]
+                    }
+                    var hasEmbed = function (obj) {
+                        var temp = jQuery("embed", obj);
+                        if (temp.length > 0) {
+                            return true
+                        }
+                        return false
+                    };
+                    var isSilverLightCheck = function (obj) {
+                        var newObj = jQuery(obj);
+                        if (newObj.attr("type") != null) {
+                            if (newObj.attr("type").indexOf("silverlight") != -1) {
+                                return true
+                            }
+                        }
+                        return false
+                    };
+                    var isQuickTimeCheck = function (obj) {
+                        var newObj = jQuery(obj);
+                        if (newObj.attr("codebase") != null) {
+                            if (newObj.attr("codebase").indexOf("apple") != -1) {
+                                return true
+                            }
+                        }
+                        if (newObj.attr("src") != null) {
+                            if (newObj.attr("src").indexOf(".mov") != -1) {
+                                return true
+                            }
+                        }
+                        if (newObj.attr("type") != null) {
+                            if (newObj.attr("type").indexOf("quicktime") != -1) {
+                                return true
+                            }
+                        }
+                        return false
+                    };
+                    var searchAttribute = function (source, name) {
+                        var indexOf = -1;
+                        for (var i = 0; i < source.length; i++) {
+                            if (source[i].name == name) {
+                                indexOf = i
+                            }
+                        }
+                        return indexOf
+                    };
+                    var searchAttributeInAttributes = function (source, name) {
+                        var indexOf = -1;
+                        var attributes = source.attributes;
+                        if (attributes.length > 0) {
+                            indexOf = searchAttribute(attributes, name)
+                        }
+                        return indexOf
+                    };
+                    var searchAttributeInChildNodes = function (source, name) {
+                        var indexOf = -1;
+                        var childNodes = source.childNodes;
+                        if (childNodes.length > 0) {
+                            indexOf = searchAttribute(childNodes, name)
+                        }
+                        return indexOf
+                    };
+                    var searchVar = function (source, name) {
+                        var indexOf = -1;
+                        var isFrom = "";
+                        var attrValue = "";
+                        var result = {
+                            from: isFrom,
+                            index: indexOf,
+                            value: attrValue
+                        };
+                        for (var i = 0; i < name.length; i++) {
+                            indexOf = searchAttributeInAttributes(source, name[i]);
+                            if (indexOf > -1) {
+                                var temp = source.attributes[indexOf].value;
+                                if (temp == "") {
+                                    indexOf = -1
+                                }
+                            }
+                            if (indexOf == -1) {
+                                indexOf = searchAttributeInChildNodes(source, name[i])
+                            } else {
+                                isFrom = "attribute";
+                                attrValue = source.attributes[indexOf].value;
+                                var result = {
+                                    from: isFrom,
+                                    index: indexOf,
+                                    value: attrValue
+                                };
+                                return result
+                            }
+                            if (indexOf > -1) {
+                                var temp = source.childNodes[indexOf].value;
+                                if (temp == "") {
+                                    indexOf = -1
+                                }
+                            }
+                            if (indexOf > -1) {
+                                isFrom = "childNode";
+                                attrValue = source.childNodes[indexOf].value;
+                                var result = {
+                                    from: isFrom,
+                                    index: indexOf,
+                                    value: attrValue
+                                };
+                                return result
+                            }
+                        }
+                        return result
+                    };
+                    var checkSourcePath = function (src) {
+                        var source = src;
+                        if (src.charAt(0) == "/") {
+                            source = "http://" + document.domain + src;
+                            return source
+                        }
+                        if (src.charAt(0) != "h") {
+                            source = "http://" + document.domain + "/" + src;
+                            return source
+                        }
+                        return source
+                    };
+                    var createTemplate = function (templateSkeletonParams) {
+                        var element = templateSkeletonParams.element;
+                        var flash_vars = templateSkeletonParams.flash_vars;
+                        var source = templateSkeletonParams.source;
+                        var id = templateSkeletonParams.id;
+                        var isSilverLight = templateSkeletonParams.isSilverLight;
+                        var silverLightType = templateSkeletonParams.silverLightType;
+                        var silverLightOuterHTML = templateSkeletonParams.silverLightOuterHTML;
+                        var isQuickTime = templateSkeletonParams.isQuickTime;
+                        source = checkSourcePath(source);
+                        var height = element.clientHeight;
+                        if (height == 0) {
+                            height = element.height
+                        }
+                        var width = element.clientWidth;
+                        if (width == 0) {
+                            width = element.width
+                        }
+                        var ran_number = Math.floor(Math.random() * 100);
+                        var name = "ibriiVideo";
+                        id = generateGuid();
+                        var template = "";
+                        if (isSilverLight) {
+                            if (jQuery.browser.msie) {
+                                template = '<embed id="' + id + '" data="' + silverLightOuterHTML + '" type="application/x-silverlight-2" src="' + source + '" width="' + width + '" height="' + height + '" source="' + source + '" background="#00FFFFFF" initParams = "' + flash_vars + '" />'
+                            } else {
+                                template = '<object id="' + id + '" width="' + width + '" height="' + height + '" type="' + silverLightType + '" data="data:application/x-silverlight,">                                     <param value="' + source + '" name="source"/>                                     <param value="' + flash_vars + '" name="initParams"/>                                     <param value="#000000" name="background"/>                                     '
+                            }
+                        } else {
+                            if (isQuickTime) {
+                                height = parseInt(height);
+                                height += 10;
+                                template = '<embed id="' + id + '" width="' + width + '" height="' + height + '"                                         controller="true" name = "' + name + '" src = "' + source + '"  bgcolor="#000000" type="video/quicktime" /> '
+                            } else {
+                                template = '<embed id="' + id + '" width="' + width + '" height="' + height + '"                                         flashvars = "' + flash_vars + '" allowscriptaccess = "always" allowfullscreen = "true" wmode = "transparent"                                         quality = "high" name = "' + name + '" src = "' + source + '"  bgcolor="#000000" type = "application/x-shockwave-flash" /> '
+                            }
+                        }
+                        return template
+                    };
+                    var flash_vars_Index;
+                    var src_Index;
+                    var flashVarsDiff = new Array("flashvars", "flashVars", "initParams", "initparams", "FlashVars");
+                    var srcDiff = new Array("source", "src", "data", "movie");
+                    var sourceType = sourceElement.tagName.toLowerCase();
+                    var hasEmbedChild = false;
+                    var isSilverLight = false;
+                    var isQuickTime = false;
+                    if (sourceType == "object") {
+                        hasEmbedChild = hasEmbed(sourceElement)
+                    }
+                    if (sourceType == "object") {
+                        isSilverLight = isSilverLightCheck(sourceElement)
+                    }
+                    isQuickTime = isQuickTimeCheck(sourceElement);
+                    var templateSkeletonParams = {
+                        element: null,
+                        flash_vars: null,
+                        source: null,
+                        id: null,
+                        isSilverLight: false,
+                        silverLightType: null,
+                        silverLightOuterHTML: null,
+                        isQuickTime: false
+                    };
+                    if (sourceType == "object" && hasEmbedChild == false && isSilverLight == false && isQuickTime == false) {
+                        var flash_vars_Result = searchVar(sourceElement, flashVarsDiff);
+                        var src_Result = searchVar(sourceElement, srcDiff);
+                        if ((flash_vars_Result.index != -1) && (src_Result.index != -1)) {
+                            templateSkeletonParams = {
+                                element: sourceElement,
+                                flash_vars: flash_vars_Result.value,
+                                source: src_Result.value,
+                                id: sourceElement.id,
+                                isSilverLight: false,
+                                silverLightType: null,
+                                silverLightOuterHTML: null,
+                                isQuickTime: false
+                            };
+                            var template = createTemplate(templateSkeletonParams);
+                            dragger.attr("embed", escape(template));
+                            isSupported = true;
+                            return
+                        } else {
+                            if ((flash_vars_Result.index == -1) && (src_Result.index != -1)) {
+                                templateSkeletonParams = {
+                                    element: sourceElement,
+                                    flash_vars: "",
+                                    source: src_Result.value,
+                                    id: sourceElement.id,
+                                    isSilverLight: false,
+                                    silverLightType: null,
+                                    silverLightOuterHTML: null,
+                                    isQuickTime: false
+                                };
+                                var template = createTemplate(templateSkeletonParams);
+                                dragger.attr("embed", escape(template));
+                                isSupported = true;
+                                return
+                            }
+                        }
+                    } else {
+                        if (sourceType == "object" && hasEmbedChild == true && isSilverLight == false && isQuickTime == false) {
+                            var flash_vars_Result_Obj = searchVar(sourceElement, flashVarsDiff);
+                            var src_Result_Obj = searchVar(sourceElement, srcDiff);
+                            var embed = jQuery("embed", sourceElement);
+                            embed = embed[0];
+                            var flash_vars_Result_Embed = searchVar(embed, flashVarsDiff);
+                            var src_Result_Embed = searchVar(embed, srcDiff);
+                            var flash_vars_Final;
+                            var src_Final;
+                            if (flash_vars_Result_Obj.index != -1) {
+                                flash_vars_Final = flash_vars_Result_Obj
+                            }
+                            if (flash_vars_Result_Embed.index != -1) {
+                                flash_vars_Final = flash_vars_Result_Embed
+                            }
+                            if (src_Result_Obj.index != -1) {
+                                src_Final = src_Result_Obj
+                            }
+                            if (src_Result_Embed.index != -1) {
+                                src_Final = src_Result_Embed
+                            }
+                            if ((flash_vars_Final != null) && (src_Final != null)) {
+                                if ((flash_vars_Final.index != -1) && (src_Final.index != -1)) {
+                                    templateSkeletonParams = {
+                                        element: sourceElement,
+                                        flash_vars: flash_vars_Final.value,
+                                        source: src_Final.value,
+                                        id: sourceElement.id,
+                                        isSilverLight: false,
+                                        silverLightType: null,
+                                        silverLightOuterHTML: null,
+                                        isQuickTime: false
+                                    };
+                                    var template = createTemplate(templateSkeletonParams);
+                                    dragger.attr("embed", escape(template));
+                                    isSupported = true;
+                                    return
+                                }
+                            } else {
+                                if ((flash_vars_Final == null) && (src_Final != null)) {
+                                    if (src_Final.index != -1) {
+                                        templateSkeletonParams = {
+                                            element: sourceElement,
+                                            flash_vars: "",
+                                            source: src_Final.value,
+                                            id: sourceElement.id,
+                                            isSilverLight: false,
+                                            silverLightType: null,
+                                            silverLightOuterHTML: null,
+                                            isQuickTime: false
+                                        };
+                                        var template = createTemplate(templateSkeletonParams);
+                                        dragger.attr("embed", escape(template));
+                                        isSupported = true;
+                                        return
+                                    }
+                                }
+                            }
+                        } else {
+                            if (sourceType == "embed" && isSilverLight == false && isQuickTime == false) {
+                                var flash_vars_Result = searchVar(sourceElement, flashVarsDiff);
+                                var src_Result = searchVar(sourceElement, srcDiff);
+                                if ((flash_vars_Result.index != -1) && (src_Result.index != -1)) {
+                                    templateSkeletonParams = {
+                                        element: sourceElement,
+                                        flash_vars: flash_vars_Result.value,
+                                        source: src_Result.value,
+                                        id: sourceElement.id,
+                                        isSilverLight: false,
+                                        silverLightType: null,
+                                        silverLightOuterHTML: null,
+                                        isQuickTime: false
+                                    };
+                                    var template = createTemplate(templateSkeletonParams);
+                                    dragger.attr("embed", escape(template));
+                                    isSupported = true;
+                                    return
+                                } else {
+                                    if ((flash_vars_Result.index == -1) && (src_Result.index != -1)) {
+                                        templateSkeletonParams = {
+                                            element: sourceElement,
+                                            flash_vars: "",
+                                            source: src_Result.value,
+                                            id: sourceElement.id,
+                                            isSilverLight: false,
+                                            silverLightType: null,
+                                            silverLightOuterHTML: null,
+                                            isQuickTime: false
+                                        };
+                                        var template = createTemplate(templateSkeletonParams);
+                                        dragger.attr("embed", escape(template));
+                                        isSupported = true;
+                                        return
+                                    }
+                                }
+                            } else {
+                                if (sourceType == "object" && isSilverLight == true && isQuickTime == false) {
+                                    var flash_vars_Result = searchVar(sourceElement, flashVarsDiff);
+                                    var src_Result = searchVar(sourceElement, srcDiff);
+                                    var silverLightType = "";
+                                    var outerHtml = "";
+                                    if ((flash_vars_Result.index != -1) && (src_Result.index != -1)) {
+                                        if (jQuery(sourceElement).attr("type").indexOf("silverlight") != -1) {
+                                            silverLightType = jQuery(sourceElement).attr("type")
+                                        }
+                                        if (jQuery.browser.msie) {
+                                            var temp = sourceElement.outerHTML;
+                                            var tempObj = jQuery(temp);
+                                            outerHtml = tempObj.attr("data")
+                                        }
+                                        templateSkeletonParams = {
+                                            element: sourceElement,
+                                            flash_vars: flash_vars_Result.value,
+                                            source: src_Result.value,
+                                            id: sourceElement.id,
+                                            isSilverLight: true,
+                                            silverLightType: silverLightType,
+                                            silverLightOuterHTML: outerHtml,
+                                            isQuickTime: false
+                                        };
+                                        var template = createTemplate(templateSkeletonParams);
+                                        dragger.attr("embed", escape(template));
+                                        isSupported = true;
+                                        return
+                                    }
+                                } else {
+                                    if (isSilverLight == false && isQuickTime == true) {
+                                        var src_Result = searchVar(sourceElement, srcDiff);
+                                        if (src_Result.index != -1) {
+                                            templateSkeletonParams = {
+                                                element: sourceElement,
+                                                flash_vars: "",
+                                                source: src_Result.value,
+                                                id: sourceElement.id,
+                                                isSilverLight: false,
+                                                silverLightType: null,
+                                                silverLightOuterHTML: null,
+                                                isQuickTime: true
+                                            };
+                                            var template = createTemplate(templateSkeletonParams);
+                                            dragger.attr("embed", escape(template));
+                                            isSupported = true;
+                                            return
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        function SetID(element, isObj, newID) {
+            if (isObj) {
+                element.attr("id", newID)
+            } else {
+                if ((element.indexOf("id") == -1) || (element.indexOf("ID") == -1)) {
+                    var startEmbed = element.indexOf("<embed");
+                    if (startEmbed == -1) {
+                        startEmbed == element.indexOf("<EMBED")
+                    }
+                    if (startEmbed != -1) {
+                        var idAtrr = 'id="' + newID + '" ';
+                        var embedStringLength = 7;
+                        element = element.substr(0, startEmbed + embedStringLength) + idAtrr + element.substr(startEmbed + embedStringLength, element.length)
+                    }
+                    var startObject = element.indexOf("<object");
+                    if (startObject == -1) {
+                        startObject == element.indexOf("<OBJECT")
+                    }
+                    if (startObject != -1) {
+                        var idAtrr = 'id="' + newID + '" ';
+                        var objectStringLength = 8;
+                        element = element.substr(0, startObject + objectStringLength) + idAtrr + element.substr(startObject + objectStringLength, element.length)
+                    }
+                }
+            }
+            return element
+        }
+
+        function SetWmode(element, isObj) {
+            if (isObj) {
+                element.attr("wmode", "transparent")
+            } else {
+                if (element.indexOf('wmode="window"') != -1) {
+                    element = element.replace('wmode="window"', 'wmode="transparent"')
+                } else {
+                    if (element.indexOf('wmode="opaque"') != -1) {
+                        element = element.replace('wmode="opaque"', 'wmode="transparent"')
+                    } else {
+                        if (element.indexOf('wmode="transparent"') == -1) {
+                            element = element.replace("<embed", '<embed wmode="transparent"')
+                        }
+                    }
+                }
+                return element
+            }
+        }
+    }
+
+    function ibriiAddHandler(target, eventName, handlerName) {
+        if (target.addEventListener) {
+            target.addEventListener(eventName, handlerName, false)
+        } else {
+            if (target.attachEvent) {
+                target.attachEvent("on" + eventName, handlerName)
+            } else {
+                target["on" + eventName] = handlerName
+            }
+        }
+    }
+
+    function grabDone() {
+        embedMouseOverEvents.mouseover = function (e) {
+            showFrame(this, frameDivs)
+        };
+        embedMouseOverEvents.mouseout = function (e) {
+            if (!e) {
+                var e = window.event
+            }
+            var destinationElement = (!(e.relatedTarget)) ? e.toElement : e.relatedTarget;
+            var obj = this;
+            if (! (jQuery(destinationElement).hasClass("ibriiDraggerContainer"))) {
+                hideFrame(frameDivs)
+            }
+        };
+        var images = jQuery("img");
+        images.each(function () {
+            var me = $(this);
+            var oldCursor = me.css("cursor");
+            me.data("ibriiOldCursor", oldCursor);
+            me.css("cursor", "move");
+            me.data("ibriiStopPropagationFunction", stopPropagationFunction);
+            me.unbind("dragstart drag");
+            if (isIE()) {
+                var srcAttr = me.attr("src");
+                if (srcAttr.indexOf("http://") == -1) {
+                    var newSrc = "http://" + window.location.hostname + "/" + srcAttr;
+                    me.attr("src", newSrc)
+                }
+                var meParent = me.parent();
+                if (meParent[0].tagName == "A") {
+                    me.data("ibriiOldImageParent", meParent.clone(true));
+                    meParent.replaceWith(me)
+                }
+            }
+            CreateFrameInternals(this)
+        });
+        var stopPropagationFunction = function (e) {
+            e.stopImmediatePropagation()
+        }
+    }
+
+    function SetDraggerContainerHoverEvent(dragger) {
+        dragger.hover(function () {
+            var internalEmbed = jQuery("embed", this.ibriiEmbedObject);
+            var objectToFrame = internalEmbed.length == 0 ? this.ibriiEmbedObject : internalEmbed;
+            showFrame(objectToFrame, frameDivs)
+        },
+        function (e) {
+            var destinationElement = e.relatedTarget;
+            var obj = this.ibriiEmbedObject;
+            if ((destinationElement == obj)) {} else {
+                hideFrame(frameDivs)
+            }
+        })
+    }
+
+    function CreateFrameInternals(element) {
+        var me = element;
+        var jMe = jQuery(element);
+        var jMeParent = jMe.parent();
+        if (jMe.height() == 0 && jMe.width() == 0 && jMeParent[0].tagName == "OBJECT") {
+            me = jMeParent[0]
+        }
+        embedMouseOverEvents.oldMouseover = me.onmouseover;
+        embedMouseOverEvents.oldMouseout = me.onmouseout;
+        me.onmouseover = embedMouseOverEvents.mouseover;
+        me.onmouseout = embedMouseOverEvents.mouseout
+    }
+
+    function createFrame(margin, width, id) {
+        if (! (id)) {
+            id = "ibriiFrameID"
+        }
+        var backColor = "#EF317C";
+        var zIndex = "2147483645";
+        var frameL = jQuery("<div class='ibriiFrame ibriiFrameLeft' id='" + id + "l'></div>");
+        var frameR = jQuery("<div class='ibriiFrame ibriiFrameRight' id='" + id + "r'></div>");
+        var frameT = jQuery("<div class='ibriiFrame ibriiFrameTop' id='" + id + "t'></div>");
+        var frameB = jQuery("<div class='ibriiFrame ibriiFrameBottom' id='" + id + "b'></div>");
+        frameL.css({
+            "background-color": backColor,
+            position: "absolute",
+            "z-index": zIndex
+        }).hide();
+        frameR.css({
+            "background-color": backColor,
+            position: "absolute",
+            "z-index": zIndex
+        }).hide();
+        frameT.css({
+            "background-color": backColor,
+            position: "absolute",
+            "z-index": zIndex
+        }).hide();
+        frameB.css({
+            "background-color": backColor,
+            position: "absolute",
+            "z-index": zIndex
+        }).hide();
+        var body = $(document.body);
+        body.append(frameL);
+        body.append(frameR);
+        body.append(frameT);
+        body.append(frameB);
+        var bufferReturn = {
+            frameL: frameL,
+            frameR: frameR,
+            frameT: frameT,
+            frameB: frameB,
+            margin: margin,
+            width: width
+        };
+        return bufferReturn
+    }
+
+    function showFrame(embed, frameDivs) {
+        var me = $(embed);
+        var meOffset = me.offset();
+        var meParent = me.parent();
+        if (meOffset.top == 0 && meOffset.left == 0 && meParent[0].tagName == "OBJECT") {
+            me = meParent;
+            meOffset = meParent.offset()
+        }
+        var h = me.height();
+        var w = me.width();
+        var y = meOffset.top;
+        var x = meOffset.left;
+        var frameL = frameDivs.frameL;
+        var frameR = frameDivs.frameR;
+        var frameT = frameDivs.frameT;
+        var frameB = frameDivs.frameB;
+        var margin = frameDivs.margin;
+        var width = frameDivs.width;
+        frameL.css({
+            top: y - margin - width,
+            left: x - margin - width,
+            width: width + "px",
+            height: h + (margin * 2) + (width * 2) + "px"
+        }).show();
+        frameR.css({
+            top: y - margin - width,
+            left: x + w + margin,
+            width: width + "px",
+            height: h + (margin * 2) + (width * 2) + "px"
+        }).show();
+        frameT.css({
+            top: y - margin - width,
+            left: x - margin - width,
+            width: w + (margin * 2) + (width * 2) + "px",
+            height: width
+        }).show();
+        frameB.css({
+            top: y + h + margin,
+            left: x - margin - width,
+            width: w + (margin * 2) + (width * 2) + "px",
+            height: width
+        }).show()
+    }
+
+    function hideFrame(frameDivs) {
+        frameDivs.frameL.hide();
+        frameDivs.frameR.hide();
+        frameDivs.frameT.hide();
+        frameDivs.frameB.hide()
+    }
+})();

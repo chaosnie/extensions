@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "Nongli://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="Nongli://www.w3.org/1999/xhtml">
+<head>
+<meta Nongli-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>农历</title>
+</head>
+<body style="width:700px;height:320px">
+<div id="main">
+<link href="index.css" rel="stylesheet" type="text/css" />
+<SCRIPT type=text/javascript src="corner.js"></SCRIPT>
+<TABLE border=0 cellSpacing=0 cellPadding=0  WIDTH: 500px;>
+<TD style="BORDER-LEFT: #d7d7d7 1px solid; WIDTH: 700px; OVERFLOW: hidden" id=dicts class=center vAlign=top width=700px; align=left>
+
+<DIV style="MARGIN-TOP: 5px; MARGIN-BOTTOM: 5px; MARGIN-LEFT: 25px" id=dictlangc_ec>
+<H4 onClick="DictFold('Nongli1');DictHide('Nongli2');">
+      <DIV class=d_left>点击查看天气</DIV>
+      <DIV class=d_right></DIV>
+</H4>
+<DIV style="PADDING-BOTTOM: 5px; PADDING-LEFT: 15px; PADDING-RIGHT: 15px; PADDING-TOP: 1px;display: none;" id=dictc_Nongli1>
+<DIV class=feature>
+<style>
+*{margin: 0;padding: 0;list-style:none;font-weight:normal;line-height:180%;}
+#showDiv {width:630px;}
+#showDiv img{border:0;}
+#showDiv{font-family: Verdana, Arial, Helvetica, sans-serif;background-color:transparent;color:#000;font-size:12px;text-align:center;}
+#showDiv a{color:#CCCCCC;text-decoration:none;}
+#showDiv a:hover{color:#FF6600;}
+#showDiv em{font-style:normal;color:#000;}
+#showDiv strong{font-weight:bold;color:#000;}
+.s360 a #city1{color:#F49700;}
+.s360{width:100%;height:50px;text-align:left;}
+.s360 a.black{font-weight:bold;}
+.s360 th em{font-weight:bold;}
+.s360 th,.s360 td{text-align:left;text-indent:0px;}
+.s360 th a,.s360 th{font-weight:bold;color:#F49700;font-size:14px;}
+.s360 td.days{text-align:center;}
+#showDiv p{text-align:center;margin-top:13px;}
+#showDiv p select{border:1px solid #A4ABB1;}
+#showDiv p span{margin-top:4px;}
+#showDiv p .button{background:url(img/button.gif) left top no-repeat;width:34px;height:19px;border:0;}
+</style>
+
+<div id="showDiv"></div>
+<script>
+function loadHtml(){
+	document.getElementById('showDiv').innerHTML = chrome.extension.getBackgroundPage().getInnerHTML();
+}
+loadHtml();
+</script>
+
+</DIV>
+</DIV>
+      
+<H4 onClick="DictFold('Nongli2');DictHide('Nongli1');">
+      <DIV class=d_left>点击查看农历</DIV>
+      <DIV class=d_right></DIV>
+</H4>
+<DIV style="PADDING-BOTTOM: 5px; PADDING-LEFT: 15px; PADDING-RIGHT: 15px; PADDING-TOP: 1px;" id=dictc_Nongli2>
+<DIV class=feature>
+
+<iframe name="Iframe" src="http://www.google.cn/ig/ifr?pid=china&url=http://www.google.com/ig/modules/china/ccal.xml" scrolling="no" FRAMEBORDER="0" style="width:80%; height:300px; border:0;  overflow:auto;">
+
+</DIV>
+</DIV>
+
+
+
+
+</DIV>
+</TD>
+</TABLE>
+</div>
+</body>
+</html>

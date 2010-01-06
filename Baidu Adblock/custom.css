@@ -1,0 +1,31 @@
+/* http://www.baidu.com/* */
+/* http://news.baidu.com/* */
+	.ecom,
+	body table[style="TABLE-LAYOUT: fixed;WORD-BREAK: break-all"] tbody tr:nth-child(6) 
+	{
+        display: none;
+    }
+/* http://tieba.baidu.com/* */
+	body #container #rightAd,
+	body div[style="margin:0 0 5px 8px;width:84%"]
+	{
+        display: none;
+    }
+
+	
+/* http://zhidao.baidu.com/* */
+	body #main #right table,
+	body #main div[style="text-align:left;margin:10px 0 0 0;"]
+	{
+        display: none;
+	}
+
+/* http://mp3.baidu.com/* */
+	body #dMA,
+	body #rightAd #ad_fd,
+	body #rightAd #bd_asp_t5s
+	{
+        display: none;
+	}
+/* http://image.baidu.com/* */
+/* http://video.baidu.com/* */

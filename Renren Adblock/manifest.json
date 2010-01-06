@@ -1,0 +1,15 @@
+{
+   "content_scripts": [ {
+      "css": [ "custom.css" ],
+      "matches": [ "http://www.renren.com/*", "http://renren.com/*", "http://home.renren.com/*", "http://blog.renren.com/*", "http://photo.renren.com/*", "http://share.renren.com/*", "http://msg.renren.com/*", "http://friend.renren.com/*", "http://gossip.renren.com/*", "http://app.renren.com/*", "http://apps.renren.com/*", "http://abc.renren.com/*", "http://invite.renren.com/*", "http://status.renren.com/*" ]
+   } ],
+   "description": "去掉人人网（校内）广告，Renren Xiaonei Adblock",
+   "icons": {
+      "128": "icon128.jpg",
+      "16": "icon16.jpg",
+      "32": "icon32.jpg",
+      "48": "icon48.jpg"
+   },
+   "name": "Renren Adblock",
+   "version": "1.0.1"
+}

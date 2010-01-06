@@ -1,0 +1,122 @@
+@charset "utf-8";
+/* CSS Document */
+IMG {
+	BORDER-RIGHT-WIDTH: 0px; BORDER-TOP-WIDTH: 0px; BORDER-BOTTOM-WIDTH: 0px; BORDER-LEFT-WIDTH: 0px
+}
+UL {
+	PADDING-BOTTOM: 0px; LIST-STYLE-TYPE: none; MARGIN: 0px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; PADDING-TOP: 0px
+}
+LI {
+	PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; PADDING-TOP: 0px
+}
+FORM {
+	MARGIN: 0px
+}
+A:link {
+	COLOR: #236eee; TEXT-DECORATION: none
+}
+A:visited {
+	COLOR: #236eee; TEXT-DECORATION: none
+}
+A:hover {
+	 COLOR: #FF6633; TEXT-DECORATION: underline
+}
+#main .center H4 .d_left {
+	FONT-SIZE: 14px
+}
+*#main *.center H5 *.d_left {
+	FONT-SIZE: 14px
+}
+*#main *.center *.caption {
+	FONT: bold 24px arial; COLOR: #236eee
+}
+*#main *.center *.dl DT {
+	FONT-WEIGHT: bold
+}
+*#main *.center *.dl DT {
+	FONT-FAMILY: Arial, "simsun", "宋体"
+}
+*#main *.center *.dl DD {
+	FONT-FAMILY: Arial, "simsun", "宋体"
+}
+#main .center .dl DD .us {
+	FONT-FAMILY: Arial, "simsun", "宋体"
+}
+#main .center .dl DD .us B {
+	FONT-FAMILY: Arial, "simsun", "宋体"
+}
+#main .center .dl DD .us B {
+	FONT-FAMILY: Verdana, Arial, "simsun", "宋体"; COLOR: #666; FONT-WEIGHT: bold
+}
+#main .center .dl DD .us {
+	FONT-FAMILY: Verdana, Arial, "simsun", "宋体"; COLOR: #666
+}
+*.line {
+	HEIGHT: 19px
+}
+*#main {
+	MARGIN: 20px auto 20px auto; WIDTH: 98%; CLEAR: both;FONT: 12px Arial, "simsun", "宋体";
+}
+*#main *.center {
+	FONT-FAMILY: Verdana, Arial, "simsun", "宋体"
+}
+#main .center H4 {
+	TEXT-ALIGN: left; MARGIN-TOP: 0px;  HEIGHT: 26px; CURSOR: pointer
+}
+#main .center H4 .d_left {
+	LINE-HEIGHT: 26px; PADDING-RIGHT: 8px; BACKGROUND: #fff; FLOAT: left; HEIGHT: 26px; PADDING-TOP: 0px
+}
+#main .center H4 .d_right {
+	MARGIN: 2px 0px; WIDTH: 18px; FLOAT: right
+}
+#main .center .dl {
+	MARGIN-BOTTOM: 20px
+}
+#main .center .dl DT {
+	LINE-HEIGHT: 24px; FONT-SIZE: 14px
+}
+#main .center .dl DD {
+	LINE-HEIGHT: 18px; FONT-FAMILY: Verdana, Arial, "simsun", "宋体"; MARGIN-LEFT: 13px
+}
+*#main *.center *.dl *.et {
+	MARGIN-BOTTOM: 15px
+}
+*#main *.center H5 {
+	TEXT-ALIGN: left; LINE-HEIGHT: 26px; HEIGHT: 26px; MARGIN-LEFT: 25px; CURSOR: pointer
+}
+*#main *.center H5 *.d_left {
+	LINE-HEIGHT: 26px; PADDING-RIGHT: 8px; BACKGROUND: #fff; FLOAT: left; HEIGHT: 26px; PADDING-TOP: 8px
+}
+*#main *.center H5 *.d_right {
+	MARGIN: 12px 0px; WIDTH: 18px; FLOAT: right
+}
+*#main *.center *.line_bm {
+	BORDER-BOTTOM: #d7d7d7 1px solid; MARGIN-LEFT: 5px
+}
+*#main *.left {
+	PADDING:0px; WIDTH: 109px;
+}
+*#main *.left DL {
+	MARGIN-BOTTOM: 10px
+}
+*#main *.left DL DT {
+	LINE-HEIGHT: 26px; PADDING-LEFT: 15px; PADDING-TOP: 4px
+}
+#main .left DL DD {
+	LINE-HEIGHT: 16px; MARGIN-LEFT: 15px
+}
+#main .center UL LI {
+	FONT-SIZE: 14px
+}
+#main .center .dl .cite {
+	FONT-STYLE: italic
+}
+#main .center OL LI {
+	FONT-FAMILY: Arial, "simsun", "宋体"
+}
+*#main *.left DL DD {
+	FONT-FAMILY: Arial, "simsun", "宋体"
+}
+*#main *.left DL DD A {
+	FONT-FAMILY: Arial, "simsun", "宋体"
+}

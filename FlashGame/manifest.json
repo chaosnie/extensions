@@ -1,0 +1,18 @@
+{
+   "name": "FlashGame",
+   "version": "1.0.2",
+   "description": "Flash Game,小游戏",
+   "permissions": [ "http://*/*", "https://*/*", "tabs" ],
+   "browser_action": {
+      "default_icon": "16.png",
+      "default_title": "开始小游戏",
+      "popup": "popup.html"
+   },
+   "icons": {
+      "128": "128.png",
+      "16": "16.png",
+      "64": "64.png",
+      "32": "32.png",
+      "48": "48.png"
+   }
+}

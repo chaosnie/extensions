@@ -1,0 +1,104 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> 
+<title>Google Music</title>
+<style>
+	a {cursor:pointer;}
+</style>
+<SCRIPT LANGUAGE="JavaScript"> 
+<!-- 
+function hotkey() 
+{ 
+var key=window.event.keyCode; 
+
+   switch(key)         
+              {	  
+              case 65:{//a
+					  chrome.tabs.create({url: 'https://www.google.com/accounts/ManageAccount'});
+					  break;
+					  }
+			  case 68:{//d
+					  open('http://douban.fm/radio','_blank','height=186,width=420,toolbar=no,menubar=no,scrollbars=no,location=no,status=no');
+					  break;
+					  }
+			  case 67:{//c
+					  chrome.tabs.create({url: 'https://www.google.com/calendar/'});
+					  break;
+					  }
+              case 69:{//e
+					  open('http://www.google.cn/music/top100/player_page?autoplay=true#loaded','_blank','width=760,height=510,toolbar=0,status=0,menubar=0,location=0,resizable=1,scrollbars=0');
+					  break;
+					  }
+			  case 70:{//f
+					  chrome.tabs.create({url: 'http://docs.google.com/'});
+					  break;
+					  }
+			  case 71:{//g
+					  chrome.tabs.create({url: 'http://www.google.com/'});
+					  break;
+					  }
+			  case 82:{//r
+					  chrome.tabs.create({url: 'https://www.google.com/reader/'});
+					  break;
+					  }
+			  case 83:{//s
+					  chrome.tabs.create({url: 'https://mail.google.com'});
+					  break;
+					  }
+			  case 84:{//t
+					  open('http://talkgadget.google.com/talkgadget/popout','_blank','width=300,height=445,toolbar=0,status=0,menubar=0,location=0,resizable=1,scrollbars=0');
+					  break;
+					  }
+			  case 86:{//v
+					  chrome.tabs.create({url: 'https://www.google.com/voice'});
+					  break;
+					  }
+			  case 87:{//w
+					  chrome.tabs.create({url: 'https://wave.google.com/'});
+					  break;
+					  }
+			  case 88:{//x
+					  chrome.tabs.create({url: 'https://mail.google.com'});
+					  break;
+					  }
+			  case 90:{//z
+					  chrome.tabs.create({url: 'https://mail.google.com'});
+					  break;
+					  }
+			  default:{}
+					  break;
+              }      
+}// end hotkey 
+
+document.onkeydown = hotkey; //当onkeydown 事件发生时调用hotkey函数 
+//--> 
+</SCRIPT>
+</head>
+<body>
+<table marginwidth="0" marginheight="0" scrolling="no" width="250" frameborder="0">
+<div>
+<a HREF="javascript:open('http://douban.fm/radio','radiowin','height=186,width=420,toolbar=no,menubar=no,scrollbars=no,location=no,status=no')"><img src="doubanradio.png"></a>
+<br />
+<a HREF="javascript:open('http://www.google.cn/music/top100/player_page?autoplay=true#loaded','_blank','width=760,height=510,toolbar=0,status=0,menubar=0,location=0,resizable=1,scrollbars=0');"><img src="musiclogo.png"></a>
+<br />
+<a HREF="javascript:open('http://talkgadget.google.com/talkgadget/popout','_blank','width=300,height=445,toolbar=0,status=0,menubar=0,location=0,resizable=1,scrollbars=0')"><img src="talklogo.png"></a>
+<br />
+<a onClick="chrome.tabs.create({url: 'https://mail.google.com'})" target="_blank"><img src="gmaillogo.png"></a>
+<br />
+<a onClick="chrome.tabs.create({url: 'http://www.google.com'})" target="_blank"><img src="google.png"></a>
+<br />
+<a onClick="chrome.tabs.create({url: 'https://wave.google.com/'})" target="_blank"><img src="wavelogo.png"></a>
+<br />
+<a onClick="chrome.tabs.create({url: 'https://www.google.com/voice'})" target="_blank"><img src="voicelogo.png"></a>
+<br />
+<a onClick="chrome.tabs.create({url: 'https://www.google.com/reader/'})" target="_blank"><img src="readerlogo.png"></a>
+<br />
+<a onClick="chrome.tabs.create({url: 'http://docs.google.com/'})" target="_blank"><img src="docslogo.png"></a>
+<br />
+<a onClick="chrome.tabs.create({url: 'https://www.google.com/calendar/'})" target="_blank"><img src="calendarlogo.png"></a>
+<br />
+<a onClick="chrome.tabs.create({url: 'https://www.google.com/accounts/ManageAccount'})"  target="_blank"><img src="account.png"></a>
+</div>
+</table> 
+</body>
+</html>
